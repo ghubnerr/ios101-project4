@@ -21,19 +21,40 @@ class TriviaViewController: UIViewController {
   private var questions = [TriviaQuestion]()
   private var currQuestionIndex = 0
   private var numCorrectQuestions = 0
+
   
   override func viewDidLoad() {
     super.viewDidLoad()
     addGradient()
     questionContainerView.layer.cornerRadius = 8.0
     // TODO: FETCH TRIVIA QUESTIONS HERE
+      TriviaQuestionService.fetchQuestions(amount: 5, difficulty: "easy", category: 11, type: "multiple") { all_questions in self.configure(with: all_questions)}
   }
-  
+    
+    private func configure(with all_questions: [TriviaQuestion]){
+        guard !all_questions.isEmpty else {
+                return
+            }
+        questions = all_questions
+        updateQuestion(withQuestionIndex: 0)
+    }
+      
   private func updateQuestion(withQuestionIndex questionIndex: Int) {
     currentQuestionNumberLabel.text = "Question: \(questionIndex + 1)/\(questions.count)"
-    let question = questions[questionIndex]
-    questionLabel.text = question.question
+      var question = questions[questionIndex]
+      if let decodedQuestionText = try? NSAttributedString(data: question.question.data(using: .utf8)!, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil).string {
+          questionLabel.text = decodedQuestionText // Output: "This is a "quoted" string."
+      }
     categoryLabel.text = question.category
+      for index in 0..<question.incorrectAnswers.count {
+          if var decoded_incorrect_answer = try? NSAttributedString(data: question.incorrectAnswers[index].data(using: .utf8)!, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil).string {
+              question.incorrectAnswers[index] = decoded_incorrect_answer
+          }
+      }
+      if var decoded_correct_answer = try? NSAttributedString(data: question.correctAnswer.data(using: .utf8)!, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil).string {
+          question.correctAnswer = decoded_correct_answer
+      }
+            
     let answers = ([question.correctAnswer] + question.incorrectAnswers).shuffled()
     if answers.count > 0 {
       answerButton0.setTitle(answers[0], for: .normal)

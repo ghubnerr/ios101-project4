@@ -2,7 +2,7 @@
 
 Submitted by: **Gabriel Lucchesi**
 
-**Trivia app **
+**Trivia app displays different questions from an API and provides you the scores**
 
 Time spent: **3** hours spent in total
 

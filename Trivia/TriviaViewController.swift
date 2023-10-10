@@ -28,7 +28,7 @@ class TriviaViewController: UIViewController {
     addGradient()
     questionContainerView.layer.cornerRadius = 8.0
     // TODO: FETCH TRIVIA QUESTIONS HERE
-      TriviaQuestionService.fetchQuestions(amount: 5, difficulty: "easy", category: 11, type: "multiple") { all_questions in self.configure(with: all_questions)}
+      TriviaQuestionService.fetchQuestions(amount: 5, difficulty: "easy", category: 11, type: "boolean") { all_questions in self.configure(with: all_questions)}
   }
     
     private func configure(with all_questions: [TriviaQuestion]){
@@ -56,6 +56,10 @@ class TriviaViewController: UIViewController {
       }
             
     let answers = ([question.correctAnswer] + question.incorrectAnswers).shuffled()
+      
+      answerButton2.isHidden = answers.count <= 2
+      answerButton3.isHidden = answers.count <= 2
+      
     if answers.count > 0 {
       answerButton0.setTitle(answers[0], for: .normal)
     }
